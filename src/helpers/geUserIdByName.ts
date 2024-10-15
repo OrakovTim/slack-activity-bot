@@ -1,5 +1,7 @@
 import { App } from '@slack/bolt';
 
+import logger from '../utils/logger';
+
 export const getUserIdByName = async (
 	app: App,
 	name: string
@@ -8,28 +10,26 @@ export const getUserIdByName = async (
 		const result = await app.client.users.list();
 
 		if (!result.members) {
-			console.error('Не удалось получить список пользователей');
+			logger.error('Не удалось получить список пользователей');
 			return null;
 		}
 
 		const user = result.members.find(member => member.name === name);
 
-		console.log('user find', user);
-
 		if (!user || !user.id) {
-			console.error(`Пользователь с именем <@${name}>не найден.`);
+			logger.error(`Пользователь с именем <@${name}>не найден.`);
 			return null;
 		}
 
 		return user.id;
 	} catch (error: unknown) {
 		if (error instanceof Error) {
-			console.error(
+			logger.error(
 				`Ошибка при получении пользователя по имени: ${error.message}`
 			);
 			return null;
 		} else {
-			console.error('Неизвестная ошибка');
+			logger.error('Неизвестная ошибка');
 			return null;
 		}
 	}
