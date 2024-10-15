@@ -1,5 +1,7 @@
 import { App } from '@slack/bolt';
 
+import logger from '../utils/logger';
+
 export class MessageService {
 	private app: App;
 
@@ -13,9 +15,9 @@ export class MessageService {
 				channel: channelId,
 				text: message
 			});
-			console.log('Message sent:', result);
+			logger.info('Message sent', result);
 		} catch (error) {
-			console.error('Error sending message:', error);
+			logger.error('Error sending message:', error);
 		}
 	}
 }

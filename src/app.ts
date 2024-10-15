@@ -7,7 +7,9 @@ import {
 	SLACK_APP_TOKEN,
 	SLACK_BOT_TOKEN,
 	SLACK_SIGNING_SECRET
-} from './config/contstants';
+} from './config/constants';
+import { messageEvent } from './events/messageEvent';
+import logger from './utils/logger';
 
 const app = express();
 
@@ -21,12 +23,13 @@ const slackApp = new App({
 app.use(express.json());
 
 trackCommand(slackApp);
+messageEvent(slackApp);
 
 (async () => {
 	await slackApp.start();
-	console.log('⚡️ Slack bot is running!');
+	logger.info('⚡️ Slack bot is running!');
 })();
 
 app.listen(PORT, () => {
-	console.log(`Server is running on http://localhost:${PORT}`);
+	logger.info(`Server is running on http://localhost:${PORT}`);
 });
