@@ -1,4 +1,4 @@
-import { App } from '@slack/bolt';
+import { App, LogLevel } from '@slack/bolt';
 import express from 'express';
 
 import { trackCommand } from './commands/track';
@@ -17,7 +17,17 @@ const slackApp = new App({
 	token: SLACK_BOT_TOKEN,
 	signingSecret: SLACK_SIGNING_SECRET,
 	socketMode: true,
-	appToken: SLACK_APP_TOKEN
+	appToken: SLACK_APP_TOKEN,
+	logLevel: LogLevel.INFO,
+	logger: {
+		debug: (msg: string) => logger.debug(msg),
+		info: (msg: string) => logger.info(msg),
+		warn: (msg: string) => logger.warn(msg),
+		error: (msg: string) => logger.error(msg),
+		setName: () => {},
+		setLevel: () => {},
+		getLevel: () => LogLevel.INFO
+	}
 });
 
 app.use(express.json());

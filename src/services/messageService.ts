@@ -15,7 +15,7 @@ export class MessageService {
 				channel: channelId,
 				text: message
 			});
-			logger.info('Message sent', result);
+			logger.info('Message sent', result.ok);
 		} catch (error) {
 			logger.error('Error sending message:', error);
 		}
