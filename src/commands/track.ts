@@ -4,6 +4,7 @@ import { getUserIdByName } from '../helpers/geUserIdByName';
 import { validationTrack } from '../helpers/validation';
 import { TrackingService } from '../services/trackingService';
 import { TrackingParams } from '../types';
+import logger from '../utils/logger';
 
 export const trackCommand = (app: App) => {
 	const trackingService = new TrackingService(app);
@@ -36,6 +37,9 @@ export const trackCommand = (app: App) => {
 
 		await trackingService.startTracking(trackingParams);
 
+		logger.info(
+			`Отслеживание активности пользователя <@${name}> началось. Таймер: ${args[1]} минут.`
+		);
 		await respond(
 			`Отслеживание активности пользователя <@${name}> началось. Таймер: ${args[1]} минут.`
 		);

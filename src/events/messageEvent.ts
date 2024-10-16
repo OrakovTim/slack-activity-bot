@@ -2,6 +2,7 @@ import { App } from '@slack/bolt';
 
 import { TrackingService } from '../services/trackingService';
 import { TrackingParams } from '../types';
+import logger from '../utils/logger';
 
 export const messageEvent = (app: App) => {
 	const trackingService = new TrackingService(app);
@@ -14,7 +15,7 @@ export const messageEvent = (app: App) => {
 			const name = userInfo.user?.name;
 
 			if (!name) {
-				console.log(`Не удалось получить имя для пользователя ${user}`);
+				logger.error(`Не удалось получить имя для пользователя ${user}`);
 				return;
 			}
 

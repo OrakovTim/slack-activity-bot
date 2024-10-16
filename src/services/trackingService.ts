@@ -1,4 +1,5 @@
 import { TrackingInfo, TrackingParams } from '../types';
+import logger from '../utils/logger';
 
 import { MessageService } from './messageService';
 
@@ -17,6 +18,11 @@ export class TrackingService {
 
 		const timeout = setTimeout(async () => {
 			const message = `Пользователь <@${userId}> не был активен в течение ${interval / 1000} секунд.`;
+
+			logger.info(
+				`Пользователь <@${userId}> не был активен в течение ${interval / 1000} секунд.`
+			);
+
 			await this.messageService.sendMessage(channelId, message);
 			trackingData.delete(key);
 		}, interval);
