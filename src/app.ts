@@ -37,7 +37,7 @@ messageEvent(slackApp);
 
 (async () => {
 	await slackApp.start();
-	logger.info('⚡️ Slack bot is running!');
+	logger.info('⚡️ Slack bot is running ⚡️');
 })();
 
 app.listen(PORT, () => {

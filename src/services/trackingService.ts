@@ -40,6 +40,6 @@ export class TrackingService {
 			trackingData.delete(key);
 		}
 
-		this.startTracking(params);
+		// this.startTracking(params);
 	}
 }
