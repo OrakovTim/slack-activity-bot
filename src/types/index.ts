@@ -1,13 +1,17 @@
 export interface TrackingInfo {
+	userId: string;
 	timeout: NodeJS.Timeout;
 	interval: number;
-	respond: any;
+	respond?: (message: string) => Promise<void>;
 	name: string;
 }
 
-export interface IValidation {
+export interface IParsedArgsResult {
 	name: string;
 	interval: number;
+}
+export interface IParsedArgsError {
+	error: string;
 }
 
 export interface TrackingParams {
@@ -15,5 +19,11 @@ export interface TrackingParams {
 	name: string;
 	channelId: string;
 	interval: number;
-	respond: any;
+	respond?: (message: string) => Promise<void>;
+}
+
+export interface StopTrackingParams {
+	userId: string;
+	name: string;
+	channelId: string;
 }
