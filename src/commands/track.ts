@@ -1,47 +1,53 @@
-import { App } from '@slack/bolt';
+import { Middleware, SlackCommandMiddlewareArgs } from '@slack/bolt';
+import { StringIndexed } from '@slack/bolt/dist/types/helpers';
 
-import { getUserIdByName } from '../helpers/geUserIdByName';
-import { validationTrack } from '../helpers/validation';
+import { TRACKING_MESSAGES } from '../constants/messages';
+import { parseArgs } from '../helpers/parseArgs';
 import { TrackingService } from '../services/trackingService';
-import { TrackingParams } from '../types';
+import { UserService } from '../services/userService';
 import logger from '../utils/logger';
 
-export const trackCommand = (app: App) => {
-	const trackingService = new TrackingService(app);
-
-	app.command('/track', async ({ command, ack, respond }) => {
+export const getTrackCommand = (
+	trackingService: TrackingService,
+	userService: UserService
+) => {
+	const handler: Middleware<
+		SlackCommandMiddlewareArgs,
+		StringIndexed
+	> = async ({ command, ack, respond }) => {
 		await ack();
+
 		const args = command.text.trim().split(' ');
+		const parsedArgs = parseArgs(args);
 
-		const validationResult = validationTrack(args);
-		if (typeof validationResult === 'string') {
-			await respond(validationResult);
+		if ('error' in parsedArgs) {
+			await respond(parsedArgs.error);
+
 			return;
 		}
 
-		const { name, interval } = validationResult;
+		const { name, interval } = parsedArgs;
 
-		const userId = await getUserIdByName(app, name);
+		const userId = await userService.getUserIdByName(name);
+
 		if (!userId) {
-			await respond(`Пользователь с именем <@${name}> не найден.`);
+			await respond(TRACKING_MESSAGES.USER_NOT_FOUND(name));
+
 			return;
 		}
 
-		const trackingParams: TrackingParams = {
+		await trackingService.startTracking({
 			userId,
 			name,
 			channelId: command.channel_id,
 			interval,
 			respond
-		};
+		});
 
-		await trackingService.startTracking(trackingParams);
+		logger.info(TRACKING_MESSAGES.TRACK_START_MESSAGE(name, interval));
 
-		logger.info(
-			`Отслеживание активности пользователя <@${name}> началось. Таймер: ${args[1]} минут.`
-		);
-		await respond(
-			`Отслеживание активности пользователя <@${name}> началось. Таймер: ${args[1]} минут.`
-		);
-	});
+		await respond(TRACKING_MESSAGES.TRACK_START_MESSAGE(name, interval));
+	};
+
+	return handler;
 };

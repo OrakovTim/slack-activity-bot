@@ -1,23 +1,21 @@
 import { App } from '@slack/bolt';
 
+import { MESSAGE_SERVICE_INFO } from '../constants/messages';
 import logger from '../utils/logger';
 
 export class MessageService {
-	private app: App;
+	constructor(private readonly app: App) {}
 
-	constructor(app: App) {
-		this.app = app;
-	}
-
-	async sendMessage(channelId: string, message: string) {
+	async sendMessage(channel: string, text: string) {
 		try {
-			const result = await this.app.client.chat.postMessage({
-				channel: channelId,
-				text: message
+			await this.app.client.chat.postMessage({
+				channel,
+				text
 			});
-			logger.info('Message sent', result.ok);
+
+			logger.info(MESSAGE_SERVICE_INFO.SUCCESS_MESSAGE(channel, text));
 		} catch (error) {
-			logger.error('Error sending message:', error);
+			logger.error(MESSAGE_SERVICE_INFO.ERROR_MESSAGE(channel, error));
 		}
 	}
 }
