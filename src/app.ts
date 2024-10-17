@@ -1,24 +1,18 @@
 import { App, LogLevel } from '@slack/bolt';
 import express from 'express';
 
-import { trackCommand } from './commands/track';
-import {
-	PORT,
-	SLACK_APP_TOKEN,
-	SLACK_BOT_TOKEN,
-	SLACK_SIGNING_SECRET
-} from './config/constants';
-import { messageEvent } from './events/messageEvent';
+import { CONFIG } from './constants/constants';
+import { registerCommands } from './helpers/registerCommands';
 import logger from './utils/logger';
 
 const app = express();
 
 const slackApp = new App({
-	token: SLACK_BOT_TOKEN,
-	signingSecret: SLACK_SIGNING_SECRET,
-	socketMode: true,
-	appToken: SLACK_APP_TOKEN,
+	signingSecret: CONFIG.SLACK_SIGNING_SECRET,
+	appToken: CONFIG.SLACK_APP_TOKEN,
+	token: CONFIG.SLACK_BOT_TOKEN,
 	logLevel: LogLevel.INFO,
+	socketMode: true,
 	logger: {
 		debug: (msg: string) => logger.debug(msg),
 		info: (msg: string) => logger.info(msg),
@@ -32,14 +26,12 @@ const slackApp = new App({
 
 app.use(express.json());
 
-trackCommand(slackApp);
-messageEvent(slackApp);
+registerCommands(slackApp);
 
-(async () => {
-	await slackApp.start();
+slackApp.start().then(() => {
 	logger.info('⚡️ Slack bot is running ⚡️');
-})();
+});
 
-app.listen(PORT, () => {
-	logger.info(`Server is running on http://localhost:${PORT}`);
+app.listen(CONFIG.PORT, () => {
+	logger.info(`Server is running on http://localhost:${CONFIG.PORT}`);
 });
