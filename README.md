@@ -56,6 +56,11 @@ SLACK_BOT_TOKEN=your-slack-bot-token
 
 SLACK_SIGNING_SECRET=your-slack-signing-secret
 
+SLACK_APP_TOKEN = your-slack-app-token
+
+PORT = your_port
+
+
 ```
 
 4. Start bot in dev
